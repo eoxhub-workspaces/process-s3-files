@@ -1,5 +1,5 @@
 services:
-  s3cmd:
+  s3-files:
     image: jorop/process-s3-files
     entrypoint: sh -c "sleep infinity"
     environment:
@@ -10,3 +10,5 @@ services:
     - BPATH=<path in bucket where files to be processed>
     - NUM_FILES=<number of files to be processed>
     - ACL=public-read
+    volumes:
+    - ./process_s3_files.sh:/home/circleci/project/process_s3_files.sh:ro
