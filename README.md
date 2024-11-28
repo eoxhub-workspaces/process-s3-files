@@ -5,3 +5,7 @@ For use with argo workflows to parse generated files. The script processes `NUM_
 
 
 The json will be printed to stdout and stored in a file at `/tmp/out.json`.
+
+# Environment
+
+All environment variables listed in `docker-compose.yaml` are mandatory.
