@@ -1,0 +1,12 @@
+services:
+  s3cmd:
+    image: jorop/process-s3-files
+    entrypoint: sh -c "sleep infinity"
+    environment:
+    - AWS_ACCESS_KEY_ID=<your access key id>
+    - AWS_SECRET_ACCESS_KEY=<your secret access key>
+    - AWS_S3_ENDPOINT=<s3 endpoint starting with https://>
+    - BUCKET=<name of the bucket>
+    - BPATH=<path in bucket where files to be processed>
+    - NUM_FILES=<number of files to be processed>
+    - ACL=public-read
