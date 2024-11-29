@@ -11,5 +11,12 @@ services:
     - BPATH=<path in bucket where files to be processed>
     - NUM_FILES=<number of files to be processed>
     - ACL=public-read
+    - DEBUG=false
+    - PUBLISH_JSON=false  # json file with result file urls will be stored in AWS_S3_ENDPOINT/$BUCKET/<see following options>.json 
+    - PUBLISH_JSON_FILENAME_ENV_VAR=TEST_UID_VAR  # extract the base file name for the json file from this env var with following regex
+    - PUBLISH_JSON_FILENAME_REGEX="(test-)([0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12})"
+    - PUBLISH_JSON_FILENAME_REGEX_MATCH_GROUP=2
+    - PUBLISH_JSON_ACL=public-read
+    - TEST_UID_VAR=test-2efe074e-ae33-11ef-a2a6-0255ac100027-2914753608  # this env var would be declared by k8s e.g. as a process uid 
     volumes:
     - ./process_s3_files.sh:/home/circleci/project/process_s3_files.sh:ro
