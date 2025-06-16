@@ -1,6 +1,6 @@
 services:
   s3-files:
-    image: jorop/process-s3-files
+    image: ghcr.io/eoxhub-workspaces/process-s3-files:0.0.7
     entrypoint: sh -c "sleep infinity"
     environment:
     - AWS_ACCESS_KEY_ID=<your access key id>
