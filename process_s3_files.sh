@@ -66,7 +66,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Get last modified file in $BUCKET at $BPATH
-FILES=$(aws $DEBUGFLAG s3 ls --region $AWS_REGION --endpoint-url $AWS_S3_ENDPOINT s3://$BUCKET/$BPATH/ | sort | tail -n $NUM_FILES | awk '{ print $4 }')
+FILES=$(aws $DEBUGFLAG s3 ls --region $AWS_REGION --endpoint-url $AWS_S3_ENDPOINT s3://$BUCKET/$BPATH/ --recursive | sort | tail -n $NUM_FILES | awk '{ print $4 }' | sed "s|^$BPATH/||")
 OUTPUT="[]"
 
 while IFS= read -r FILE; do
@@ -78,12 +78,10 @@ while IFS= read -r FILE; do
     URL=$AWS_S3_ENDPOINT/$BUCKET/$BPATH/$FILE
     # If no group provided, create URL array (legacy mode)
     if [[ ${#GROUP_ARGS[@]} -eq 0 ]]; then
-        echo "No --group parameter used, will create URLs array."
         OUTPUT=$(echo $OUTPUT | jq -r --arg URL "$URL" '. += [$URL]')
     else
       # otherwise process the groups from argument
       # processing means matching regex to filename
-        echo "--group parameter(s) used, will create output object."
         for group in "${GROUP_ARGS[@]}"; do
           process_group "$group" "$URL" "$FILE"
         done
