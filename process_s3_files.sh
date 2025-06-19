@@ -1,9 +1,10 @@
 #!/bin/bash
+command -v jq >/dev/null || { echo >&2 "jq is required"; exit 1; }
 
 process_group() {
   local group_str="$1"
   local url="$2"
-  local filename="$2"
+  local filename="$3"
   # Extract components from the group config
   local regex id mimetype
   IFS=',' read -r -a parts <<< "$group_str"
@@ -80,6 +81,8 @@ while IFS= read -r FILE; do
         echo "No --group parameter used, will create URLs array."
         OUTPUT=$(echo $OUTPUT | jq -r --arg URL "$URL" '. += [$URL]')
     else
+      # otherwise process the groups from argument
+      # processing means matching regex to filename
         echo "--group parameter(s) used, will create output object."
         for group in "${GROUP_ARGS[@]}"; do
           process_group "$group" "$URL" "$FILE"
@@ -91,6 +94,7 @@ done <<< $FILES
 if [[ ${#GROUP_ARGS[@]} -eq 0 ]]; then
     echo "{\"urls\":$OUTPUT}" > /tmp/out.json
 else
+# write output object to out.json
   json_input="{}"
   for id in "${!GROUP_URLS[@]}"; do
     urls="[${GROUP_URLS[$id]}]"
