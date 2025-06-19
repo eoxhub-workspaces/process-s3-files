@@ -1,4 +1,29 @@
 #!/bin/bash
+
+process_group() {
+  local group_cfg="$1"
+  # Extract components from the group config
+  local regex id mimetype
+  IFS=',' read -r -a parts <<< "$group_cfg"
+  for part in "${parts[@]}"; do
+    case "$part" in
+      regex=*)     regex="${part#regex=}";;
+      id=*)        id="${part#id=}";;
+      mimetype=*)  mimetype="${part#mimetype=}";;
+      *)
+        echo "Warning: Unrecognized part '$part' in group '$group_cfg'" >&2
+        ;;
+    esac
+  done
+
+  # Placeholder: Insert your AWS S3 logic here
+  echo "Processing group:"
+  echo "  regex:     $regex"
+  echo "  id:        $id"
+  echo "  mimetype:  $mimetype"
+
+}
+
 if [ "$DEBUG" == "true" ]; then
     env
     DEBUGFLAG="--debug"
@@ -27,6 +52,7 @@ while [[ $# -gt 0 ]]; do
       ;;
   esac
 done
+
 # Get last modified file in $BUCKET at $BPATH
 FILES=$(aws $DEBUGFLAG s3 ls --region $AWS_REGION --endpoint-url $AWS_S3_ENDPOINT s3://$BUCKET/$BPATH/ | sort | tail -n $NUM_FILES | awk '{ print $4 }')
 URL_LIST="[]"
@@ -41,6 +67,10 @@ while IFS= read -r FILE; do
     if [[ ${#GROUP_ARGS[@]} -eq 0 ]]; then
         echo "No --group parameter supplied, will create URLs array."
         URL_LIST=$(echo $URL_LIST | jq -r --arg URL "$URL" '. += [$URL]')
+    else
+        for group in "${GROUP_ARGS[@]}"; do
+            process_group "$group"
+        done
     fi
 done <<< $FILES
 
