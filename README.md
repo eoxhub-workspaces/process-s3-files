@@ -6,22 +6,47 @@ For use with argo workflows to parse generated files. The script processes `NUM_
 
 a) No command line parameters `./process_s3_files.sh` Creates a json `{"urls": ["url-1", "url-2", "url-n"]}`
 
-b) Possible to add multiple `--group` parameters in format `--group "regex=harshness.*,id=output_1,mimetype=image/tiff"`
+b) Possible to add multiple `--group` parameters in format `--group "regex=harshness.*,id=output_tif,mimetype=image/tiff"`
 which will output an object 
 ```json
 {
-  "output_1":{
+  "output_tifs":{
     "urls":[
       "url1",
       "url2"
     ],
     "mimetype":"image/tiff"
   },
-  "output_2":{
+  "output_json":{
     "urls":[
       "url3"
     ],
+    "mimetype":"application/geo+json"
+  }
+}
+```
+
+c) With env `SPLIT_URLS_INTO_SEPARATE_GROUPS=true`, the grouped outputs from b) can be split into 1 url per object:
+
+```json
+{
+  "output_tif_1":{
+    "urls":[
+      "url1"
+    ],
     "mimetype":"image/tiff"
+  },
+  "output_tif_2":{
+    "urls":[
+      "url2"
+    ],
+    "mimetype":"image/tiff"
+  },
+  "output_json_1":{
+    "urls":[
+      "url3"
+    ],
+    "mimetype":"application/geo+json"
   }
 }
 ```

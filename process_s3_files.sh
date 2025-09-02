@@ -104,7 +104,11 @@ else
                     --arg mimetype "$mimetype" \
       '. + {($id): {urls: $urls, mimetype: $mimetype}}' <<< "$json_input")
   done
-  echo "$json_input" > /tmp/out.json
+  if [ "$SPLIT_URLS_INTO_SEPARATE_GROUPS" == "true" ]; then
+    echo "$json_input" | jq 'to_entries | map(.key as $k | .value.mimetype as $m | .value.urls | to_entries | map({ "\($k)_\(.key+1)": { mimetype: $m, urls: [ .value ] } }) ) | add | add' > /tmp/out.json
+  else
+    echo "$json_input" > /tmp/out.json
+  fi
 fi
 # store json in bucket
 if [ "$PUBLISH_JSON" == "true" ]; then
