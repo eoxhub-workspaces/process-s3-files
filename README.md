@@ -2,12 +2,13 @@
 
 For use with argo workflows to parse generated files. The script processes `NUM_FILES` sorted by last modified, sets the acl and stores the url in the json.
 
-## Types of output 
+## Types of output
 
 a) No command line parameters `./process_s3_files.sh` Creates a json `{"urls": ["url-1", "url-2", "url-n"]}`
 
 b) Possible to add multiple `--group` parameters in format `--group "regex=harshness.*,id=output_tif,mimetype=image/tiff"`
-which will output an object 
+which will output an object
+
 ```json
 {
   "output_tifs":{
@@ -54,8 +55,8 @@ c) With env `SPLIT_URLS_INTO_SEPARATE_GROUPS=true`, the grouped outputs from b) 
 Script also sets the permission to `ACL` (normally `public-read`).  
 
 The json will be printed to stdout and stored in a file at `/tmp/out.json`.  
-If `PUBLISH_JSON` is set to `true` and the `PUBLISH_JSON_*` env vars are configured the result json will be uploaded to the base bucket path with the generated filename. See `docker-compose.yaml` for details.
+If `PUBLISH_JSON` is set to `true` and the `PUBLISH_JSON_*` env vars are configured the result json will be uploaded to the bucket at path defined by env var `PUBLISH_JSON_SUBFOLDER` with the generated filename. See `docker-compose.yaml` for details.
 
-# Environment
+## Environment
 
 All environment variables listed in `docker-compose.yaml` are mandatory, except for `PUBLISH_JSON_*` if `PUBLISH_JSON=false`.
