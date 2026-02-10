@@ -117,7 +117,10 @@ if [ "$PUBLISH_JSON" == "true" ]; then
         JSON_FILENAME_BASE=${BASH_REMATCH[$PUBLISH_JSON_FILENAME_REGEX_MATCH_GROUP]}
         JSON_SUBPATH=""
         if [ -n "$PUBLISH_JSON_SUBFOLDER" ]; then
-            JSON_SUBPATH="${PUBLISH_JSON_SUBFOLDER%/}/"
+            # remove leading slash
+            JSON_SUBPATH_TMP="${PUBLISH_JSON_SUBFOLDER#/}"
+            # ensure trailing slash
+            JSON_SUBPATH="${JSON_SUBPATH_TMP%/}/"
         fi
         aws $DEBUGFLAG s3 cp /tmp/out.json --region $AWS_REGION --endpoint-url $AWS_S3_ENDPOINT s3://$BUCKET/$JSON_SUBPATH$JSON_FILENAME_BASE.json --acl $PUBLISH_JSON_ACL
     else
