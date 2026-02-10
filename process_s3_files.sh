@@ -75,7 +75,11 @@ while IFS= read -r FILE; do
     aws $DEBUGFLAG s3api put-object-acl --region $AWS_REGION --endpoint-url $AWS_S3_ENDPOINT --bucket $BUCKET --key $BPATH/$FILE --acl $ACL
     echo Permissions set to $ACL
     # add to url array
-    URL=$BUCKET.$AWS_S3_ENDPOINT/$BPATH/$FILE
+    URL=$AWS_S3_ENDPOINT/$BPATH/$FILE
+    if [[ $URL =~ ^(https?://)(.*) ]]; then
+        NEW_URL="${BASH_REMATCH[1]}$BUCKET.${BASH_REMATCH[2]}"
+        URL=$NEW_URL
+    fi
     # If no group provided, create URL array (legacy mode)
     if [[ ${#GROUP_ARGS[@]} -eq 0 ]]; then
         OUTPUT=$(echo $OUTPUT | jq -r --arg URL "$URL" '. += [$URL]')
